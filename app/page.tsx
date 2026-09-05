@@ -22,8 +22,11 @@ type User = {
   role?: string;
 };
 
-const API_URL = "http://127.0.0.1:8000/api";
-const STORAGE_URL = "http://127.0.0.1:8000/storage";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+
+const STORAGE_URL =
+  process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8000/storage";
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -115,7 +118,6 @@ export default function Home() {
             <div className="text-2xl font-extrabold tracking-tight">
               WAJAH <span className="text-blue-300">SMK</span>
             </div>
-
             <div className="mt-0.5 whitespace-nowrap text-xs text-blue-200">
               Platform Informasi & Ulasan SMK Indonesia
             </div>
