@@ -133,7 +133,7 @@ export default function Home() {
             </a>
 
             <a
-              href="#sekolah"
+              href="/sekolah"
               className="shrink-0 text-blue-100 transition hover:text-white"
             >
               Sekolah
