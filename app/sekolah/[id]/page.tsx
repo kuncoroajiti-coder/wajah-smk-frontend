@@ -58,11 +58,12 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
-const STORAGE_URL = "http://127.0.0.1:8000/storage";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8000/storage";
 
 async function getSchool(id: string): Promise<SchoolResponse> {
   const response = await fetch(
-    `http://127.0.0.1:8000/api/schools/${id}`,
+    `${API_URL}/schools/${id}`,
     {
       cache: "no-store",
     }
@@ -77,7 +78,7 @@ async function getSchool(id: string): Promise<SchoolResponse> {
 
 async function getReviews(id: string): Promise<ReviewsResponse> {
   const response = await fetch(
-    `http://127.0.0.1:8000/api/schools/${id}/reviews`,
+    `${API_URL}/schools/${id}/reviews`,
     {
       cache: "no-store",
     }
