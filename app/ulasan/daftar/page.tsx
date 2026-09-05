@@ -1,5 +1,8 @@
 "use client";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8000/storage";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -64,7 +67,7 @@ export default function DaftarUlasanPage() {
       }
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/reviews?${params.toString()}`,
+        `${API_URL}/reviews?${params.toString()}`,
         {
           cache: "no-store",
         }
@@ -377,7 +380,7 @@ export default function DaftarUlasanPage() {
                         .map((photo) => (
                           <img
                             key={photo.id}
-                            src={`http://127.0.0.1:8000/storage/${photo.path}`}
+                            src={`${STORAGE_URL}/${photo.path}`}
                             alt={photo.caption || "Foto ulasan"}
                             className="h-16 w-full rounded-lg object-cover"
                           />
