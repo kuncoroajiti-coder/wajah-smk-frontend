@@ -4,8 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Notification, {
+  type NotificationType,
+} from "@/components/Notification";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:8000/api";
 
 type User = {
   id: number;
@@ -25,10 +30,12 @@ export default function UlasanPage() {
   const [content, setContent] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState<
-    "success" | "error" | ""
-  >("");
+
+  const [notification, setNotification] = useState<{
+    type: NotificationType;
+    title: string;
+    message?: string;
+  } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -51,12 +58,21 @@ export default function UlasanPage() {
     }
   }, []);
 
+  function showNotification(
+    type: NotificationType,
+    title: string,
+    message?: string
+  ) {
+    setNotification({
+      type,
+      title,
+      message,
+    });
+  }
+
   function handlePhotoChange(
     e: React.ChangeEvent<HTMLInputElement>
   ) {
-    setMessage("");
-    setMessageType("");
-
     const selectedFiles = Array.from(e.target.files || []);
 
     if (selectedFiles.length === 0) {
@@ -64,8 +80,11 @@ export default function UlasanPage() {
     }
 
     if (photos.length + selectedFiles.length > 5) {
-      setMessage("Maksimal 5 foto yang dapat diunggah.");
-      setMessageType("error");
+      showNotification(
+        "warning",
+        "Maksimal 5 foto",
+        "Maksimal 5 foto yang dapat diunggah."
+      );
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -87,10 +106,34 @@ export default function UlasanPage() {
     });
 
     if (invalidFile) {
-      setMessage(
-        `Foto "${invalidFile.name}" harus berformat JPG, JPEG, PNG, atau WebP dan berukuran maksimal 5 MB.`
-      );
-      setMessageType("error");
+      const validType = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+      ].includes(invalidFile.type);
+
+      const validSize =
+        invalidFile.size <= 5 * 1024 * 1024;
+
+      if (!validSize) {
+        showNotification(
+          "warning",
+          "Ukuran foto terlalu besar",
+          `Foto "${invalidFile.name}" berukuran lebih dari 5 MB. Maksimal ukuran setiap foto adalah 5 MB.`
+        );
+      } else if (!validType) {
+        showNotification(
+          "warning",
+          "Format foto tidak didukung",
+          `Foto "${invalidFile.name}" harus berformat JPG, JPEG, PNG, atau WebP.`
+        );
+      } else {
+        showNotification(
+          "error",
+          "Foto tidak dapat digunakan",
+          `Foto "${invalidFile.name}" tidak memenuhi ketentuan upload.`
+        );
+      }
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -107,11 +150,25 @@ export default function UlasanPage() {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+
+    showNotification(
+      "success",
+      "Foto berhasil ditambahkan",
+      `${selectedFiles.length} foto berhasil ditambahkan.`
+    );
   }
 
   function removePhoto(index: number) {
     setPhotos((currentPhotos) =>
-      currentPhotos.filter((_, photoIndex) => photoIndex !== index)
+      currentPhotos.filter(
+        (_, photoIndex) => photoIndex !== index
+      )
+    );
+
+    showNotification(
+      "info",
+      "Foto dihapus",
+      "Foto telah dihapus dari daftar unggahan."
     );
   }
 
@@ -120,30 +177,32 @@ export default function UlasanPage() {
   ) {
     e.preventDefault();
 
-    setMessage("");
-    setMessageType("");
-
     if (!schoolId) {
-      setMessage(
-        "Sekolah belum ditentukan. Silakan kembali ke profil sekolah dan pilih Beri Ulasan."
+      showNotification(
+        "error",
+        "Sekolah belum ditentukan",
+        "Silakan kembali ke profil sekolah dan pilih Beri Ulasan."
       );
-      setMessageType("error");
       return;
     }
 
     const token = localStorage.getItem("wajah_smk_token");
 
     if (!token || !user) {
-      setMessage(
-        "Anda harus masuk terlebih dahulu untuk memberikan ulasan."
+      showNotification(
+        "warning",
+        "Anda harus masuk terlebih dahulu",
+        "Silakan masuk ke akun Anda untuk memberikan ulasan."
       );
-      setMessageType("error");
       return;
     }
 
     if (content.trim().length < 10) {
-      setMessage("Isi ulasan minimal 10 karakter.");
-      setMessageType("error");
+      showNotification(
+        "warning",
+        "Ulasan terlalu singkat",
+        "Isi ulasan minimal 10 karakter."
+      );
       return;
     }
 
@@ -153,14 +212,8 @@ export default function UlasanPage() {
       const formData = new FormData();
 
       formData.append("rating", String(rating));
-      formData.append(
-        "title",
-        title.trim()
-      );
-      formData.append(
-        "content",
-        content.trim()
-      );
+      formData.append("title", title.trim());
+      formData.append("content", content.trim());
 
       photos.forEach((photo) => {
         formData.append("photos[]", photo);
@@ -183,12 +236,13 @@ export default function UlasanPage() {
       if (response.status === 401) {
         localStorage.removeItem("wajah_smk_token");
         localStorage.removeItem("wajah_smk_user");
-
         setUser(null);
-        setMessage(
-          "Sesi login Anda sudah tidak berlaku. Silakan masuk kembali."
+
+        showNotification(
+          "warning",
+          "Sesi login telah berakhir",
+          "Silakan masuk kembali sebelum mengirim ulasan."
         );
-        setMessageType("error");
 
         return;
       }
@@ -202,26 +256,30 @@ export default function UlasanPage() {
                 typeof error === "string"
             );
 
-          setMessage(
+          showNotification(
+            "error",
+            "Ulasan tidak dapat dikirim",
             firstError ||
               data.message ||
-              "Ulasan tidak dapat dikirim."
+              "Periksa kembali data ulasan Anda."
           );
         } else {
-          setMessage(
+          showNotification(
+            "error",
+            "Ulasan tidak dapat dikirim",
             data.message ||
-              "Ulasan tidak dapat dikirim."
+              "Terjadi kesalahan saat mengirim ulasan."
           );
         }
 
-        setMessageType("error");
         return;
       }
 
-      setMessage(
-        "Ulasan berhasil dikirim dan sedang menunggu pemeriksaan administrator."
+      showNotification(
+        "success",
+        "Ulasan berhasil dikirim",
+        "Ulasan Anda telah diterima dan sedang menunggu pemeriksaan administrator."
       );
-      setMessageType("success");
 
       setTitle("");
       setContent("");
@@ -232,16 +290,17 @@ export default function UlasanPage() {
         fileInputRef.current.value = "";
       }
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         router.push(`/sekolah/${schoolId}`);
-      }, 1800);
+      }, 2500);
     } catch (error) {
       console.error("Gagal mengirim ulasan:", error);
 
-      setMessage(
-        "Tidak dapat terhubung ke server Laravel."
+      showNotification(
+        "error",
+        "Tidak dapat terhubung ke server",
+        "Periksa koneksi internet Anda dan coba lagi."
       );
-      setMessageType("error");
     } finally {
       setLoading(false);
     }
@@ -250,8 +309,18 @@ export default function UlasanPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       <Header />
-      <section className="mx-auto max-w-3xl px-6 py-12">
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+
+      {notification && (
+        <Notification
+          type={notification.type}
+          title={notification.title}
+          message={notification.message}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
+      <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
           <div className="mb-8">
             <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
               Bagikan Pengalaman
@@ -268,24 +337,12 @@ export default function UlasanPage() {
             </p>
 
             {user && (
-              <div className="mt-5 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-800">
+              <div className="mt-5 break-words rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-800">
                 Anda memberikan ulasan sebagai{" "}
                 <strong>{user.email}</strong>
               </div>
             )}
           </div>
-
-          {message && (
-            <div
-              className={`mb-6 rounded-xl px-4 py-3 text-sm ${
-                messageType === "success"
-                  ? "bg-green-50 text-green-800"
-                  : "bg-red-50 text-red-700"
-              }`}
-            >
-              {message}
-            </div>
-          )}
 
           <form
             onSubmit={handleSubmit}
@@ -386,8 +443,8 @@ export default function UlasanPage() {
                 />
 
                 <div className="mt-2 text-xs text-slate-500">
-                  Maksimal 5 foto. Format JPG, JPEG, PNG, atau
-                  WebP. Maksimal 5 MB per foto.
+                  Maksimal 5 foto. Format JPG, JPEG, PNG,
+                  atau WebP. Maksimal 5 MB per foto.
                 </div>
               </div>
 
@@ -421,7 +478,9 @@ export default function UlasanPage() {
 
                           <button
                             type="button"
-                            onClick={() => removePhoto(index)}
+                            onClick={() =>
+                              removePhoto(index)
+                            }
                             disabled={loading}
                             className="mt-2 text-xs font-semibold text-red-600 hover:text-red-700 disabled:opacity-50"
                           >
