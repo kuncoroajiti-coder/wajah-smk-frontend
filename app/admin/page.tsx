@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Header from "@/components/Header";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8000/storage";
@@ -347,70 +348,7 @@ export default function AdminPage() {
   return (
     <>
       <main className="admin-page">
-        <header className="admin-header">
-          <div className="admin-header-inner">
-            <div className="brand-area">
-              <div className="brand">
-                WAJAH{" "}
-                <span>SMK</span>
-              </div>
-
-              <div className="brand-subtitle">
-                Dashboard Administrator
-              </div>
-            </div>
-
-            <div className="header-right">
-              <a
-                href="/admin"
-                className="nav-link"
-              >
-                Dashboard
-              </a>
-
-              <a
-                href="/admin/sekolah"
-                className="nav-link"
-              >
-                Manajemen Sekolah
-              </a>
-
-              <a
-                href="/"
-                className="nav-link"
-              >
-                Beranda
-              </a>
-
-              <div className="account-info">
-                <div className="account-text">
-                  <div className="account-email">
-                    {user?.nip ?? "-"}
-                  </div>
-
-                  <div className="account-role">
-                    Super Admin
-                  </div>
-                </div>
-
-                <div
-                  className="avatar"
-                  aria-label="Avatar pengguna"
-                >
-                  {avatarLetter}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="logout-button"
-                >
-                  Keluar
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header />
 
         <section className="admin-content">
           <div className="page-heading">
