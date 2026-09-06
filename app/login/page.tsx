@@ -2,6 +2,9 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 
@@ -65,16 +68,13 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-12">
+    <div className="min-h-screen bg-slate-50">
+      <Header />
+
+      <main className="px-6 py-12">
       <div className="mx-auto max-w-md">
 
         <div className="mb-8 text-center">
-          <a
-            href="/"
-            className="text-3xl font-extrabold text-[#123b7a]"
-          >
-            Wajah SMK
-          </a>
 
           <h1 className="mt-6 text-2xl font-bold text-slate-900">
             Masuk ke Wajah SMK
@@ -160,26 +160,29 @@ export default function LoginPage() {
 
           <div className="mt-6 border-t border-slate-200 pt-6 text-center text-sm text-slate-600">
             Belum memiliki akun?{" "}
-            <a
+            <Link
               href="/register"
-              className="font-bold text-[#123b7a] hover:underline"
+              className="font-bold text-blue-950 hover:underline"
             >
               Daftar sekarang
-            </a>
+            </Link>
           </div>
 
         </div>
 
         <div className="mt-6 text-center">
-          <a
+          <Link
             href="/"
-            className="text-sm font-semibold text-slate-600 hover:text-[#123b7a]"
+            className="text-sm font-semibold text-slate-600 hover:text-blue-950"
           >
             ← Kembali ke Beranda
-          </a>
+          </Link>
         </div>
 
       </div>
     </main>
+
+      <Footer />
+    </div>
   );
 }
