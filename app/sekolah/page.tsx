@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 
 type School = {
@@ -223,65 +225,7 @@ export default function SchoolsPage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-800">
       {/* HEADER */}
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-          <Link
-            href="/"
-            className="flex items-center gap-3"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-900 text-lg font-bold text-white">
-              W
-            </div>
-
-            <div>
-              <div className="text-lg font-bold tracking-tight text-blue-950">
-                WAJAH SMK
-              </div>
-              <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                Platform Ulasan Sekolah
-              </div>
-            </div>
-          </Link>
-
-          <nav className="hidden items-center gap-7 text-sm font-medium md:flex">
-            <Link
-              href="/"
-              className="text-slate-600 transition hover:text-blue-800"
-            >
-              Beranda
-            </Link>
-
-            <Link
-              href="/sekolah"
-              className="font-semibold text-blue-800"
-            >
-              Sekolah
-            </Link>
-
-            <Link
-              href="/ulasan/daftar"
-              className="text-slate-600 transition hover:text-blue-800"
-            >
-              Ulasan
-            </Link>
-
-            <Link
-              href="/#tentang"
-              className="text-slate-600 transition hover:text-blue-800"
-            >
-              Tentang
-            </Link>
-          </nav>
-
-          <Link
-            href="/login"
-            className="rounded-xl bg-blue-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800"
-          >
-            Login
-          </Link>
-        </div>
-      </header>
-
+      <Header />
       {/* HERO */}
       <section className="bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8 lg:py-16">
@@ -710,15 +654,7 @@ export default function SchoolsPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="mt-12 border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <div className="font-semibold tracking-wide text-blue-950">
-            WAJAH SMK
-          </div>
-
-          <div>© 2026 Wajah SMK. Semua hak dilindungi.</div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
