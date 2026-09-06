@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 
@@ -247,31 +249,7 @@ export default function UlasanPage() {
 
   return (
     <main className="min-h-screen bg-slate-50">
-      <header className="bg-[#123B73] text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-          <div>
-            <div className="text-2xl font-bold">
-              WAJAH{" "}
-              <span className="text-blue-300">
-                SMK
-              </span>
-            </div>
-
-            <div className="text-sm text-blue-200">
-              Platform Informasi & Ulasan SMK Indonesia
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="text-sm font-semibold hover:text-blue-200"
-          >
-            ← Kembali
-          </button>
-        </div>
-      </header>
-
+      <Header />
       <section className="mx-auto max-w-3xl px-6 py-12">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <div className="mb-8">
@@ -475,17 +453,7 @@ export default function UlasanPage() {
         </div>
       </section>
 
-      <footer className="bg-slate-950 px-6 py-8 text-white">
-        <div className="mx-auto max-w-7xl">
-          <div className="font-bold">
-            WAJAH SMK
-          </div>
-
-          <div className="mt-1 text-sm text-slate-400">
-            Platform informasi dan ulasan SMK Indonesia.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
