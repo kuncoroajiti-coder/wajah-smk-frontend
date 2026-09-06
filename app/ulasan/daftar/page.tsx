@@ -4,6 +4,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8000/storage";
 
 import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 
 type School = {
@@ -128,50 +130,7 @@ export default function DaftarUlasanPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       {/* HEADER */}
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-900 text-lg font-black text-white">
-              W
-            </div>
-
-            <div>
-              <div className="text-xl font-black tracking-tight text-blue-900">
-                WAJAH SMK
-              </div>
-              <div className="text-[10px] font-semibold tracking-wide text-slate-500">
-                Wadah Aspirasi & Jaringan SMK
-              </div>
-            </div>
-          </Link>
-
-          <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex">
-            <Link href="/" className="transition hover:text-blue-700">
-              Beranda
-            </Link>
-
-            <Link href="/sekolah" className="transition hover:text-blue-700">
-              Sekolah
-            </Link>
-
-            <Link href="/ulasan/daftar" className="font-bold text-blue-700">
-              Ulasan
-            </Link>
-
-            <Link href="/tentang" className="transition hover:text-blue-700">
-              Tentang
-            </Link>
-
-            <Link
-              href="/ulasan"
-              className="rounded-lg bg-blue-700 px-4 py-2 text-white transition hover:bg-blue-800"
-            >
-              Beri Ulasan
-            </Link>
-          </nav>
-        </div>
-      </header>
-
+      <Header />
       {/* HERO */}
       <section className="bg-blue-900">
         <div className="mx-auto max-w-7xl px-6 py-12">
@@ -442,32 +401,7 @@ export default function DaftarUlasanPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="mt-12 border-t border-blue-800 bg-blue-950">
-        <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 md:grid-cols-3 md:items-center">
-          <div>
-            <div className="text-xl font-black tracking-tight text-white">
-              WAJAH SMK
-            </div>
-            <div className="mt-1 text-xs font-semibold text-blue-200">
-              Wadah Aspirasi & Jaringan SMK
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 md:justify-center">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-blue-700 text-blue-100">
-              ⚙
-            </div>
-
-            <span className="text-sm font-semibold text-blue-100">
-              kuncoroaji, BBPPMPV BOE
-            </span>
-          </div>
-
-          <div className="text-sm text-blue-200 md:text-right">
-            © 2026 Wajah SMK. Semua hak dilindungi.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

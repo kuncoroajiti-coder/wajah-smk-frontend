@@ -77,6 +77,8 @@ export default function Header() {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  const showReviewCta = pathname === "/ulasan/daftar";
+
   return (
     <header className="bg-blue-950 text-white">
       <div className="mx-auto flex min-h-[80px] max-w-7xl items-center justify-between gap-6 px-6 lg:px-8">
@@ -111,6 +113,15 @@ export default function Header() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-3">
+          {showReviewCta && (
+            <Link
+              href="/ulasan"
+              className="hidden rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 lg:block"
+            >
+              Beri Ulasan
+            </Link>
+          )}
+
           {!userLoaded ? (
             <div className="h-10 w-10 shrink-0" />
           ) : user ? (
