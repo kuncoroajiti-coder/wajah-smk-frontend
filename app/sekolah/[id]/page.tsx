@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 type School = {
   id: number;
@@ -143,27 +145,7 @@ export default async function SchoolDetail({
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      {/* Header */}
-      <header className="bg-[#082b5c] text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-          <a
-            href="/"
-            className="text-2xl font-extrabold tracking-tight"
-          >
-            WAJAH{" "}
-            <span className="text-blue-300">
-              SMK
-            </span>
-          </a>
-
-          <a
-            href="/"
-            className="text-sm font-semibold text-blue-100 hover:text-white"
-          >
-            ← Kembali ke Beranda
-          </a>
-        </div>
-      </header>
+      <Header />
 
       {/* School Hero */}
       <section className="bg-[#0b3773] text-white">
@@ -585,18 +567,7 @@ export default async function SchoolDetail({
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-950 text-slate-400">
-        <div className="mx-auto max-w-7xl px-6 py-8 text-sm lg:px-8">
-          <div className="font-bold text-white">
-            WAJAH SMK
-          </div>
-
-          <div className="mt-1">
-            Platform informasi dan ulasan SMK Indonesia.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }
