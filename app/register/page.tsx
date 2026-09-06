@@ -2,8 +2,13 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://127.0.0.1:8000/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -105,17 +110,7 @@ export default function RegisterPage() {
   return (
     <main className="register-page">
       {/* HEADER */}
-      <header className="register-header">
-        <div className="register-header-inner">
-          <a href="/" className="brand">
-            WAJAH SMK
-          </a>
-
-          <a href="/login" className="login-button">
-            Masuk
-          </a>
-        </div>
-      </header>
+      <Header />
 
       {/* CONTENT */}
       <section className="register-content">
@@ -510,6 +505,8 @@ export default function RegisterPage() {
           }
         }
       `}</style>
+
+      <Footer />
     </main>
   );
 }
