@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8000/storage";
@@ -149,56 +151,7 @@ export default function ReviewDetailPage() {
 
   return (
     <main className="page">
-      <header className="header">
-        <div className="header-inner">
-          <Link href="/" className="brand">
-            WAJAH SMK
-          </Link>
-
-          <nav className="nav">
-            <Link href="/">Beranda</Link>
-            <Link href="/sekolah">Sekolah</Link>
-            <Link href="/ulasan">Ulasan</Link>
-            <Link href="/">Tentang</Link>
-          </nav>
-
-          <div className="account">
-            {user ? (
-              <>
-                <div className="avatar">
-                  {user.name?.charAt(0).toUpperCase() || "P"}
-                </div>
-
-                <div className="account-info">
-                  <strong>{user.email}</strong>
-                  <span>Pengguna</span>
-                </div>
-
-                <button
-                  type="button"
-                  className="logout"
-                  onClick={() => {
-                    localStorage.removeItem(
-                      "wajah_smk_token"
-                    );
-                    localStorage.removeItem(
-                      "wajah_smk_user"
-                    );
-                    window.location.href = "/";
-                  }}
-                >
-                  Keluar
-                </button>
-              </>
-            ) : (
-              <Link href="/login" className="login-button">
-                Masuk
-              </Link>
-            )}
-          </div>
-        </div>
-      </header>
-
+      <Header />
       <section className="hero">
         <div className="container">
           <Link href="/" className="back-link">
@@ -399,28 +352,7 @@ export default function ReviewDetailPage() {
         </div>
       </section>
 
-      <footer className="footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            WAJAH SMK
-          </div>
-
-          <div className="footer-developer">
-            <span className="developer-icon">
-              ◇
-            </span>
-
-            <span>
-              kuncoroaji, BBPPMPV BOE
-            </span>
-          </div>
-
-          <div className="footer-copy">
-            © 2026 Wajah SMK. Semua hak dilindungi.
-          </div>
-        </div>
-      </footer>
-
+      <Footer />
       <style jsx>{`
         .page {
           min-height: 100vh;
