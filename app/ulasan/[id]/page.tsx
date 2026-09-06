@@ -37,9 +37,12 @@ type Review = {
 };
 
 type User = {
+  id: number;
   name: string;
-  email: string;
-  role?: string;
+  nip: string;
+  role: "pegawai_boe" | "manajemen" | "super_admin";
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
 };
 
 function getPhotoUrl(path: string) {

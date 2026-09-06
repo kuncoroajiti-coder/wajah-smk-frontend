@@ -8,8 +8,10 @@ const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:800
 type User = {
   id: number;
   name: string;
-  email: string;
-  role?: string;
+  nip: string;
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
+  role: "super_admin";
 };
 
 type ReviewPhoto = {
@@ -38,7 +40,9 @@ type Review = {
   user?: {
     id: number;
     name: string;
-    email: string;
+    nip: string;
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
   };
 
   photos?: ReviewPhoto[];
@@ -82,7 +86,7 @@ export default function AdminPage() {
     try {
       const parsedUser: User = JSON.parse(userRaw);
 
-      if (parsedUser.role !== "admin") {
+      if (parsedUser.role !== "super_admin") {
         window.location.href = "/";
         return;
       }
@@ -337,7 +341,7 @@ export default function AdminPage() {
 
   const avatarLetter =
     user?.name?.trim()?.charAt(0)?.toUpperCase() ||
-    user?.email?.charAt(0)?.toUpperCase() ||
+    user?.nip?.charAt(0)?.toUpperCase() ||
     "A";
 
   return (
@@ -381,11 +385,11 @@ export default function AdminPage() {
               <div className="account-info">
                 <div className="account-text">
                   <div className="account-email">
-                    {user?.email ?? "-"}
+                    {user?.nip ?? "-"}
                   </div>
 
                   <div className="account-role">
-                    Pengguna
+                    Super Admin
                   </div>
                 </div>
 
@@ -741,13 +745,13 @@ export default function AdminPage() {
                           Pengirim:{" "}
                           <strong>
                             {review.user?.name ??
-                              "Pengguna"}
+                              "Super Admin"}
                           </strong>
                         </div>
 
                         <div>
-                          Email:{" "}
-                          {review.user?.email ?? "-"}
+                          NIP:{" "}
+                          {review.user?.nip ?? "-"}
                         </div>
 
                         <div>

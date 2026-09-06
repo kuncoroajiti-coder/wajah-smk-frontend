@@ -15,8 +15,10 @@ const API_URL =
 type User = {
   id: number;
   name: string;
-  email: string;
-  role?: string;
+  nip: string;
+  role: "pegawai_boe" | "manajemen" | "super_admin";
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
 };
 
 export default function UlasanPage() {
@@ -48,7 +50,7 @@ export default function UlasanPage() {
       if (savedUser) {
         const parsedUser: User = JSON.parse(savedUser);
 
-        if (parsedUser && parsedUser.email) {
+        if (parsedUser && parsedUser.nip && parsedUser.status === "aktif") {
           setUser(parsedUser);
         }
       }
@@ -339,7 +341,7 @@ export default function UlasanPage() {
             {user && (
               <div className="mt-5 break-words rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-800">
                 Anda memberikan ulasan sebagai{" "}
-                <strong>{user.email}</strong>
+                <strong>{user.nip}</strong>
               </div>
             )}
           </div>

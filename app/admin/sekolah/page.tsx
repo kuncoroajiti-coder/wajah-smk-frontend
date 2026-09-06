@@ -7,8 +7,10 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 type User = {
   id: number;
   name: string;
-  email: string;
-  role?: string;
+  nip: string;
+  role: "super_admin";
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
 };
 
 type School = {
@@ -87,7 +89,7 @@ export default function AdminSchoolsPage() {
     try {
       const parsedUser: User = JSON.parse(userRaw);
 
-      if (parsedUser.role !== "admin") {
+      if (parsedUser.role !== "super_admin") {
         window.location.href = "/";
         return;
       }
@@ -440,7 +442,7 @@ export default function AdminSchoolsPage() {
 
   const avatarLetter =
     user?.name?.trim()?.charAt(0)?.toUpperCase() ||
-    user?.email?.charAt(0)?.toUpperCase() ||
+    user?.nip?.charAt(0)?.toUpperCase() ||
     "A";
 
   return (
@@ -482,11 +484,11 @@ export default function AdminSchoolsPage() {
               <div className="account-info">
                 <div className="account-text">
                   <div className="account-email">
-                    {user?.email ?? "-"}
+                    {user?.nip ?? "-"}
                   </div>
 
                   <div className="account-role">
-                    Pengguna
+                    Super Admin
                   </div>
                 </div>
 

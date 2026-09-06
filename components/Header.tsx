@@ -4,16 +4,18 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+type UserRole = "pegawai_boe" | "manajemen" | "super_admin";
+
 type User = {
   id: number;
   name: string;
-  email: string;
-  role?: string;
+  nip: string;
+  role: UserRole;
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 
 const menuItems = [
   { label: "Beranda", href: "/" },
@@ -21,6 +23,19 @@ const menuItems = [
   { label: "Ulasan", href: "/ulasan/daftar" },
   { label: "Tentang", href: "/tentang" },
 ];
+
+function roleLabel(role?: UserRole) {
+  switch (role) {
+    case "super_admin":
+      return "Super Admin";
+    case "manajemen":
+      return "Manajemen";
+    case "pegawai_boe":
+      return "Pegawai BOE";
+    default:
+      return "Pegawai";
+  }
+}
 
 export default function Header() {
   const pathname = usePathname();
@@ -35,16 +50,26 @@ export default function Header() {
       const savedUser = localStorage.getItem("wajah_smk_user");
 
       if (savedUser) {
-        setUser(JSON.parse(savedUser) as User);
+        const parsedUser = JSON.parse(savedUser) as User;
+
+        setUser(parsedUser);
+
+        if (
+          parsedUser.must_change_password &&
+          pathname !== "/change-password"
+        ) {
+          router.replace("/change-password");
+        }
       } else {
         setUser(null);
       }
     } catch {
+      localStorage.removeItem("wajah_smk_user");
       setUser(null);
     } finally {
       setUserLoaded(true);
     }
-  }, []);
+  }, [pathname, router]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -68,8 +93,10 @@ export default function Header() {
     } finally {
       localStorage.removeItem("wajah_smk_token");
       localStorage.removeItem("wajah_smk_user");
+
       setUser(null);
       setMobileMenuOpen(false);
+
       router.push("/");
       router.refresh();
     }
@@ -83,7 +110,27 @@ export default function Header() {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  const showReviewCta = pathname === "/ulasan/daftar";
+  const isForcedPasswordChange =
+    user?.must_change_password && pathname === "/change-password";
+
+  const showReviewCta =
+    !!user &&
+    !user.must_change_password &&
+    pathname === "/ulasan/daftar";
+
+  const showEmployeeActions =
+    !!user && !user.must_change_password;
+
+  const showManagement =
+    showEmployeeActions &&
+    (user?.role === "manajemen" || user?.role === "super_admin");
+
+  const showAdmin =
+    showEmployeeActions &&
+    user?.role === "super_admin";
+
+  const displayInitial =
+    user?.name?.trim().charAt(0).toUpperCase() || "P";
 
   return (
     <header className="bg-blue-950 text-white">
@@ -98,7 +145,6 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden items-center gap-8 md:flex">
           {menuItems.map((item) => {
             const active = isActive(item.href);
@@ -117,9 +163,34 @@ export default function Header() {
               </Link>
             );
           })}
+
+          {showManagement && (
+            <Link
+              href="/manajemen"
+              className={`border-b-2 py-2 text-sm font-medium transition ${
+                isActive("/manajemen")
+                  ? "border-blue-300 text-white"
+                  : "border-transparent text-blue-100 hover:text-white"
+              }`}
+            >
+              Manajemen
+            </Link>
+          )}
+
+          {showAdmin && (
+            <Link
+              href="/admin"
+              className={`border-b-2 py-2 text-sm font-medium transition ${
+                isActive("/admin")
+                  ? "border-blue-300 text-white"
+                  : "border-transparent text-blue-100 hover:text-white"
+              }`}
+            >
+              Admin
+            </Link>
+          )}
         </nav>
 
-        {/* Desktop / User Actions */}
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {showReviewCta && (
             <Link
@@ -136,19 +207,26 @@ export default function Header() {
             <>
               <div className="hidden text-right sm:block">
                 <div className="max-w-[220px] truncate text-sm font-bold leading-tight text-white">
-                  {user.email}
+                  {user.name}
                 </div>
 
                 <div className="mt-0.5 text-xs text-blue-200">
-                  {user.role === "admin" ? "Administrator" : "Pengguna"}
+                  {user.nip} · {roleLabel(user.role)}
                 </div>
               </div>
 
+              <Link
+                href="/change-password"
+                className="hidden rounded-xl border border-blue-200/70 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10 lg:block"
+              >
+                Ganti Password
+              </Link>
+
               <div
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-200 text-sm font-extrabold text-blue-950 sm:h-10 sm:w-10"
-                title={user.email}
+                title={`${user.name} — ${roleLabel(user.role)}`}
               >
-                {user.email.charAt(0).toUpperCase()}
+                {displayInitial}
               </div>
 
               <button
@@ -160,24 +238,14 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <>
-              <Link
-                href="/login"
-                className="hidden rounded-xl border border-blue-200/70 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10 sm:block sm:px-4 sm:py-2.5"
-              >
-                Masuk
-              </Link>
-
-              <Link
-                href="/register"
-                className="hidden rounded-xl bg-white px-3 py-2 text-sm font-semibold text-blue-950 transition hover:bg-blue-50 sm:block sm:px-4 sm:py-2.5"
-              >
-                Daftar
-              </Link>
-            </>
+            <Link
+              href="/login"
+              className="hidden rounded-xl border border-blue-200/70 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10 sm:block sm:px-4 sm:py-2.5"
+            >
+              Masuk
+            </Link>
           )}
 
-          {/* Mobile Menu Button */}
           <button
             type="button"
             aria-label={mobileMenuOpen ? "Tutup menu" : "Buka menu"}
@@ -192,7 +260,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div className="border-t border-blue-900 bg-blue-950 md:hidden">
           <nav className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
@@ -215,39 +282,101 @@ export default function Header() {
                 );
               })}
 
-              {showReviewCta && (
+              {showEmployeeActions && (
+                <>
+                  <Link
+                    href="/ulasan"
+                    className="mt-2 rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-500"
+                  >
+                    Beri Ulasan
+                  </Link>
+
+                  <Link
+                    href="/my-reviews"
+                    className="mt-2 rounded-xl border border-blue-200/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    Riwayat Ulasan
+                  </Link>
+                </>
+              )}
+
+              {showManagement && (
                 <Link
-                  href="/ulasan"
-                  className="mt-2 rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-500"
+                  href="/manajemen"
+                  className={`mt-2 rounded-lg px-3 py-3 text-sm font-semibold transition ${
+                    isActive("/manajemen")
+                      ? "bg-blue-900 text-white"
+                      : "text-blue-100 hover:bg-blue-900 hover:text-white"
+                  }`}
                 >
-                  Beri Ulasan
+                  Dashboard Manajemen
                 </Link>
               )}
 
-              {!userLoaded ? null : user ? (
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="mt-2 rounded-xl border border-blue-200/70 px-4 py-3 text-left text-sm font-semibold text-white transition hover:bg-white/10"
-                >
-                  Keluar dari akun
-                </button>
-              ) : (
-                <div className="mt-2 grid grid-cols-2 gap-2">
+              {showAdmin && (
+                <>
                   <Link
-                    href="/login"
-                    className="rounded-xl border border-blue-200/70 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+                    href="/admin"
+                    className={`mt-2 rounded-lg px-3 py-3 text-sm font-semibold transition ${
+                      isActive("/admin")
+                        ? "bg-blue-900 text-white"
+                        : "text-blue-100 hover:bg-blue-900 hover:text-white"
+                    }`}
                   >
-                    Masuk
+                    Dashboard Admin
                   </Link>
 
                   <Link
-                    href="/register"
-                    className="rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
+                    href="/admin/sekolah"
+                    className={`mt-2 rounded-lg px-3 py-3 text-sm font-semibold transition ${
+                      isActive("/admin/sekolah")
+                        ? "bg-blue-900 text-white"
+                        : "text-blue-100 hover:bg-blue-900 hover:text-white"
+                    }`}
                   >
-                    Daftar
+                    Kelola Sekolah
                   </Link>
-                </div>
+                </>
+              )}
+
+              {user && (
+                <>
+                  <div className="mt-3 rounded-xl bg-blue-900/60 px-4 py-3">
+                    <div className="text-sm font-bold text-white">
+                      {user.name}
+                    </div>
+
+                    <div className="mt-1 text-xs text-blue-200">
+                      {user.nip} · {roleLabel(user.role)}
+                    </div>
+                  </div>
+
+                  {!isForcedPasswordChange && (
+                    <Link
+                      href="/change-password"
+                      className="mt-2 rounded-xl border border-blue-200/70 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                    >
+                      Ganti Password
+                    </Link>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="mt-2 rounded-xl border border-blue-200/70 px-4 py-3 text-left text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    Keluar dari akun
+                  </button>
+                </>
+              )}
+
+              {!user && (
+                <Link
+                  href="/login"
+                  className="mt-2 rounded-xl border border-blue-200/70 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  Masuk
+                </Link>
               )}
             </div>
           </nav>

@@ -48,10 +48,12 @@ type ApiResponse = {
 };
 
 type LoggedInUser = {
-  id?: number;
-  name?: string;
-  email?: string;
-  role?: string;
+  id: number;
+  name: string;
+  nip: string;
+  role: "pegawai_boe" | "manajemen" | "super_admin";
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
 };
 
 function renderStars(rating: number) {
@@ -109,8 +111,8 @@ function getInitial(user: LoggedInUser | null) {
     return user.name.trim().charAt(0).toUpperCase();
   }
 
-  if (user?.email?.trim()) {
-    return user.email.trim().charAt(0).toUpperCase();
+  if (user?.nip?.trim()) {
+    return user.nip.trim().charAt(0).toUpperCase();
   }
 
   return "P";
@@ -160,6 +162,27 @@ export default function MyReviewsPage() {
       setNotLoggedIn(true);
       setLoading(false);
       return;
+    }
+
+    try {
+      const parsedUser: LoggedInUser | null = storedUser
+        ? JSON.parse(storedUser)
+        : null;
+
+      if (parsedUser?.must_change_password) {
+        router.replace("/change-password?redirect=/my-reviews");
+        return;
+      }
+
+      if (parsedUser?.status === "nonaktif") {
+        localStorage.removeItem("wajah_smk_token");
+        localStorage.removeItem("wajah_smk_user");
+        setNotLoggedIn(true);
+        setLoading(false);
+        return;
+      }
+    } catch {
+      localStorage.removeItem("wajah_smk_user");
     }
 
     async function loadReviews() {

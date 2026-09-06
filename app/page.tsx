@@ -21,8 +21,10 @@ type SchoolResponse = {
 type User = {
   id: number;
   name: string;
-  email: string;
-  role?: string;
+  nip: string;
+  role: "pegawai_boe" | "manajemen" | "super_admin";
+  status: "aktif" | "nonaktif";
+  must_change_password: boolean;
 };
 
 const API_URL =
@@ -43,7 +45,7 @@ export default function Home() {
       if (savedUser) {
         const parsedUser: User = JSON.parse(savedUser);
 
-        if (parsedUser && parsedUser.email) {
+        if (parsedUser && parsedUser.nip && parsedUser.status === "aktif") {
           setUser(parsedUser);
         }
       }
@@ -113,13 +115,13 @@ export default function Home() {
             {user && (
               <div className="mt-6 inline-flex max-w-full items-center gap-3 rounded-xl border border-blue-300/40 bg-blue-400/10 px-4 py-3 text-sm text-blue-50">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-200 font-bold text-[#082b5c]">
-                  {user.email.charAt(0).toUpperCase()}
+                  {user.nip.charAt(0).toUpperCase()}
                 </div>
 
                 <span className="min-w-0 break-words">
                   Anda masuk sebagai{" "}
                   <strong className="break-all text-white">
-                    {user.email}
+                    {user.nip}
                   </strong>
                 </span>
               </div>
