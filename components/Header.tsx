@@ -28,6 +28,7 @@ export default function Header() {
 
   const [user, setUser] = useState<User | null>(null);
   const [userLoaded, setUserLoaded] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -44,6 +45,10 @@ export default function Header() {
       setUserLoaded(true);
     }
   }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     const token = localStorage.getItem("wajah_smk_token");
@@ -64,6 +69,7 @@ export default function Header() {
       localStorage.removeItem("wajah_smk_token");
       localStorage.removeItem("wajah_smk_user");
       setUser(null);
+      setMobileMenuOpen(false);
       router.push("/");
       router.refresh();
     }
@@ -81,17 +87,18 @@ export default function Header() {
 
   return (
     <header className="bg-blue-950 text-white">
-      <div className="mx-auto flex min-h-[80px] max-w-7xl items-center justify-between gap-6 px-6 lg:px-8">
-        <Link href="/" className="shrink-0">
-          <div className="text-xl font-bold tracking-tight">
+      <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:min-h-[80px] lg:px-8">
+        <Link href="/" className="min-w-0 shrink">
+          <div className="text-lg font-bold tracking-tight sm:text-xl">
             WAJAH <span className="text-blue-300">SMK</span>
           </div>
 
-          <div className="mt-0.5 text-xs font-medium text-blue-200">
+          <div className="mt-0.5 hidden text-xs font-medium text-blue-200 sm:block">
             Platform Informasi &amp; Ulasan SMK Indonesia
           </div>
         </Link>
 
+        {/* Desktop Navigation */}
         <nav className="hidden items-center gap-8 md:flex">
           {menuItems.map((item) => {
             const active = isActive(item.href);
@@ -112,7 +119,8 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-3">
+        {/* Desktop / User Actions */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {showReviewCta && (
             <Link
               href="/ulasan"
@@ -127,7 +135,7 @@ export default function Header() {
           ) : user ? (
             <>
               <div className="hidden text-right sm:block">
-                <div className="whitespace-nowrap text-sm font-bold leading-tight text-white">
+                <div className="max-w-[220px] truncate text-sm font-bold leading-tight text-white">
                   {user.email}
                 </div>
 
@@ -137,7 +145,7 @@ export default function Header() {
               </div>
 
               <div
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-200 text-sm font-extrabold text-blue-950"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-200 text-sm font-extrabold text-blue-950 sm:h-10 sm:w-10"
                 title={user.email}
               >
                 {user.email.charAt(0).toUpperCase()}
@@ -146,7 +154,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-xl border border-blue-200/70 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="hidden rounded-xl border border-blue-200/70 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10 sm:block sm:px-4 sm:py-2.5"
               >
                 Keluar
               </button>
@@ -155,21 +163,96 @@ export default function Header() {
             <>
               <Link
                 href="/login"
-                className="rounded-xl border border-blue-200/70 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="hidden rounded-xl border border-blue-200/70 px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10 sm:block sm:px-4 sm:py-2.5"
               >
                 Masuk
               </Link>
 
               <Link
                 href="/register"
-                className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
+                className="hidden rounded-xl bg-white px-3 py-2 text-sm font-semibold text-blue-950 transition hover:bg-blue-50 sm:block sm:px-4 sm:py-2.5"
               >
                 Daftar
               </Link>
             </>
           )}
+
+          {/* Mobile Menu Button */}
+          <button
+            type="button"
+            aria-label={mobileMenuOpen ? "Tutup menu" : "Buka menu"}
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-200/70 text-white transition hover:bg-white/10 md:hidden"
+          >
+            <span className="text-xl leading-none">
+              {mobileMenuOpen ? "×" : "☰"}
+            </span>
+          </button>
         </div>
       </div>
+
+      {/* Mobile Navigation */}
+      {mobileMenuOpen && (
+        <div className="border-t border-blue-900 bg-blue-950 md:hidden">
+          <nav className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
+            <div className="flex flex-col">
+              {menuItems.map((item) => {
+                const active = isActive(item.href);
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`rounded-lg px-3 py-3 text-sm font-semibold transition ${
+                      active
+                        ? "bg-blue-900 text-white"
+                        : "text-blue-100 hover:bg-blue-900 hover:text-white"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              {showReviewCta && (
+                <Link
+                  href="/ulasan"
+                  className="mt-2 rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-500"
+                >
+                  Beri Ulasan
+                </Link>
+              )}
+
+              {!userLoaded ? null : user ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="mt-2 rounded-xl border border-blue-200/70 px-4 py-3 text-left text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  Keluar dari akun
+                </button>
+              ) : (
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <Link
+                    href="/login"
+                    className="rounded-xl border border-blue-200/70 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    Masuk
+                  </Link>
+
+                  <Link
+                    href="/register"
+                    className="rounded-xl bg-white px-4 py-3 text-center text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
+                  >
+                    Daftar
+                  </Link>
+                </div>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
