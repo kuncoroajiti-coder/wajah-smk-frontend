@@ -1,4 +1,5 @@
 "use client";
+import Header from "@/components/Header";
 
 import { useEffect, useState } from "react";
 
@@ -199,46 +200,7 @@ export default function ManagementDashboardPage() {
 
   return (
     <main className="page">
-      <header className="header">
-        <div className="header-inner">
-          <div>
-            <a href="/manajemen" className="brand">
-              WAJAH <span>SMK</span>
-            </a>
-            <div className="subtitle">
-              Dashboard Manajemen
-            </div>
-          </div>
-
-          <nav className="nav">
-            <a href="/manajemen">Dashboard</a>
-            <a href="/">Beranda</a>
-
-            {user?.role === "super_admin" && (
-              <a href="/admin">Admin</a>
-            )}
-
-            <div className="account">
-              <div className="account-text">
-                <strong>{user?.name ?? "-"}</strong>
-                <span>{user?.nip ?? "-"}</span>
-              </div>
-
-              <div className="avatar">
-                {user?.name?.charAt(0).toUpperCase() ?? "M"}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="logout-button"
-              >
-                Keluar
-              </button>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <section className="content">
         <div className="breadcrumb">
