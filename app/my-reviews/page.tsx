@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 const STORAGE_URL = process.env.NEXT_PUBLIC_STORAGE_URL || "http://127.0.0.1:8000/storage";
@@ -229,103 +231,7 @@ export default function MyReviewsPage() {
 
   return (
     <main className="page">
-      <header className="header">
-        <div className="header-inner">
-          <Link href="/" className="brand">
-            <div className="brand-name">
-              <span style={{ color: "#ffffff" }}>WAJAH</span>{" "}
-              <strong style={{ color: "#78b5ff" }}>SMK</strong>
-            </div>
-
-            <div className="brand-subtitle">
-              Platform Informasi &amp; Ulasan SMK Indonesia
-            </div>
-          </Link>
-
-          <nav className="nav">
-            <Link
-              href="/"
-              className="nav-link"
-              style={{
-                color: "#dbe7f5",
-                textDecoration: "none",
-              }}
-            >
-              <span style={{ color: "#dbe7f5" }}>Beranda</span>
-            </Link>
-
-            <Link
-              href="/sekolah"
-              className="nav-link"
-              style={{
-                color: "#dbe7f5",
-                textDecoration: "none",
-              }}
-            >
-              <span style={{ color: "#dbe7f5" }}>Sekolah</span>
-            </Link>
-
-            <Link
-              href="/ulasan/daftar"
-              className="nav-link"
-              style={{
-                color: "#ffffff",
-                textDecoration: "none",
-              }}
-            >
-              <span style={{ color: "#ffffff" }}>Ulasan</span>
-            </Link>
-
-            <Link
-              href="/tentang"
-              className="nav-link"
-              style={{
-                color: "#dbe7f5",
-                textDecoration: "none",
-              }}
-            >
-              <span style={{ color: "#dbe7f5" }}>Tentang</span>
-            </Link>
-          </nav>
-
-          {!notLoggedIn && user ? (
-            <div className="account">
-              <div className="account-text">
-                <div className="account-email">
-                  {user.email || "Pengguna"}
-                </div>
-
-                <div className="account-role">
-                  Pengguna
-                </div>
-              </div>
-
-              <div
-                className="avatar"
-                aria-label="Avatar pengguna"
-              >
-                {getInitial(user)}
-              </div>
-
-              <button
-                type="button"
-                className="logout-button"
-                onClick={handleLogout}
-                disabled={loggingOut}
-              >
-                {loggingOut ? "Keluar..." : "Keluar"}
-              </button>
-            </div>
-          ) : (
-            <Link
-              href="/login?redirect=/my-reviews"
-              className="login-button"
-            >
-              Masuk
-            </Link>
-          )}
-        </div>
-      </header>
+      <Header />
 
       <section className="content">
         <div className="title-area">
@@ -552,30 +458,7 @@ export default function MyReviewsPage() {
           )}
       </section>
 
-      <footer className="footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <strong>WAJAH SMK</strong>
-          </div>
-
-          <div className="footer-developer">
-            <div
-              className="tech-icon"
-              aria-hidden="true"
-            >
-              ◇
-            </div>
-
-            <span>
-              kuncoroaji, BBPPMPV BOE
-            </span>
-          </div>
-
-          <div className="footer-copyright">
-            © 2026 Wajah SMK. Semua hak dilindungi.
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       <style jsx>{`
         * {
