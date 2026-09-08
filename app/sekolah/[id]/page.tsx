@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SchoolMap from "@/components/SchoolMap";
 
 type School = {
   id: number;
@@ -17,6 +18,8 @@ type School = {
   accreditation_date: string | null;
   curriculum_code: string | null;
   curriculum_name: string | null;
+  latitude: number | null;
+  longitude: number | null;
 };
 
 type SchoolProgram = {
@@ -245,6 +248,34 @@ export default async function SchoolDetail({
                   value={school.curriculum_code ?? "-"}
                 />
               </div>
+            </div>
+
+            {/* Lokasi Sekolah */}
+            <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h2 className="text-2xl font-extrabold text-[#082b5c]">
+                Lokasi Sekolah
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Lokasi sekolah berdasarkan koordinat yang tersedia pada basis
+                data Wajah SMK.
+              </p>
+
+              {school.latitude !== null && school.longitude !== null ? (
+                <div className="mt-5">
+                  <SchoolMap
+                    latitude={school.latitude}
+                    longitude={school.longitude}
+                    schoolName={school.name.trim()}
+                  />
+                  <p className="mt-3 text-xs text-slate-500">
+                    Koordinat: {school.latitude}, {school.longitude}
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-5 rounded-xl bg-slate-50 p-5 text-sm text-slate-500">
+                  Koordinat lokasi sekolah belum tersedia.
+                </div>
+              )}
             </div>
 
             {/* Kompetensi */}
